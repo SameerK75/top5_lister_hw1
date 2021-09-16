@@ -26,6 +26,14 @@ export default class Top5Controller {
         document.getElementById("undo-button").onmousedown = (event) => {
             this.model.undo();
         }
+        document.getElementById("redo-button").onmousedown = (event) => {
+            //this.model.redo();
+        }
+        document.getElementById("close-button").onmousedown = (event) => {
+            this.model.unselectAll();
+            this.model.view.clearWorkspace();
+            this.model.clearStatusBar();
+        }
 
         // SETUP THE ITEM HANDLERS
         for (let i = 1; i <= 5; i++) {
@@ -84,6 +92,10 @@ export default class Top5Controller {
 
             // GET THE SELECTED LIST
             this.model.loadList(id);
+
+            // SHOW LIST IN STATUS BAR AND CLEAR ANY PREVIOUS LIST
+            this.model.clearStatusBar();
+            this.model.fillStatusBar();
         }
 
         // FOR HIGHLIGHTING LIST ON MOUSE OVER
@@ -114,10 +126,14 @@ export default class Top5Controller {
             listText.onkeydown = (event) => {
                 if (event.key === 'Enter') {
                     this.model.changeListTitle(event.target.value);
+                    this.model.clearStatusBar();
+                    this.model.fillStatusBar();
                 }
             }
             listText.onblur = (event) => {
                 this.model.changeListTitle(event.target.value);
+                this.model.clearStatusBar();
+                this.model.fillStatusBar();
             }
 
             

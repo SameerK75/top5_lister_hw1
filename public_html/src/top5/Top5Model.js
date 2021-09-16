@@ -171,6 +171,17 @@ export default class Top5Model {
         listCard.classList.remove("mouseOver-list-card");
     }
 
+    fillStatusBar() {
+       let listName = this.currentList.getName();
+       let statusBar = document.getElementById("top5-statusbar");
+       statusBar.appendChild(document.createTextNode("Top 5 " + listName));
+    }
+    
+    clearStatusBar() {
+        let statusBar = document.getElementById("top5-statusbar");
+        statusBar.innerHTML = "";
+    }
+
     addChangeItemTransaction = (id, newText) => {
         // GET THE CURRENT TEXT
         let oldText = this.currentList.items[id];
@@ -190,5 +201,8 @@ export default class Top5Model {
             this.tps.undoTransaction();
             this.view.updateToolbarButtons(this);
         }
+    }
+
+    redo() {
     }
 }
