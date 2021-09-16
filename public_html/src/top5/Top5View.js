@@ -48,6 +48,8 @@ export default class Top5View {
         deleteButton.setAttribute("class", "list-card-button");
         deleteButton.setAttribute("value", "\u2715");
 
+      
+
         // PUT EVERYTHING IN THE MOST OUTER DIV
         card.appendChild(textSpan);
         card.appendChild(deleteButton);
