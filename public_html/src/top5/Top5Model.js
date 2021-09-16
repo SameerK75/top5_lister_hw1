@@ -149,9 +149,23 @@ export default class Top5Model {
     }
 
     deleteList(deleteIndex) {
-        this.top5Lists.splice(deleteIndex, 1);
-        this.view.refreshLists(this.top5Lists);
-        this.saveLists();
+        let deletingList = this.getList(deleteIndex);
+        let keepCurrentList;
+        if(this.currentList.id === deletingList.id) {
+            this.top5Lists.splice(deleteIndex, 1);
+            this.view.refreshLists(this.top5Lists);
+            this.saveLists();
+            this.clearStatusBar();
+            this.view.clearWorkspace();
+        }
+        else {
+            keepCurrentList = this.currentList;
+            this.top5Lists.splice(deleteIndex, 1);
+            this.view.refreshLists(this.top5Lists);
+            this.saveLists();
+            this.currentList = keepCurrentList;
+            this.view.highlightList(this.currentList.id);
+        }
 
     }
 
