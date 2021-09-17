@@ -19,11 +19,18 @@ export default class Top5Controller {
     initHandlers() {
         // SETUP THE TOOLBAR BUTTON HANDLERS
         document.getElementById("add-list-button").onmousedown = (event) => {
-            let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
+            if(this.model.currentList === null) {
+                let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
+                this.model.loadList(newList.id);
+                this.model.saveLists();
+                this.model.clearStatusBar();
+                this.model.fillStatusBar();
+            }
+            /*let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
             this.model.loadList(newList.id);
             this.model.saveLists();
             this.model.clearStatusBar();
-            this.model.fillStatusBar();
+            this.model.fillStatusBar();*/
         }
         document.getElementById("undo-button").onmousedown = (event) => {
             this.model.undo();
@@ -160,7 +167,8 @@ export default class Top5Controller {
 
             // FOR CONFIRMING DELETE
             document.getElementById("dialog-confirm-button").onmousedown = (event) => {
-                this.model.deleteList(this.listToDeleteIndex); 
+                this.model.deleteList(this.listToDeleteIndex);
+                this.model.view.updateToolbarButtons(this.model); 
                 modal.classList.remove("is-visible");
             }
             // FOR CANCELLING DELETE

@@ -123,6 +123,12 @@ export default class Top5View {
         }
         else {
             this.enableButton("close-button");
-        }   
+        }
+        if(this.controller.model.hasCurrentList()) {
+            this.disableButton("add-list-button");
+        }
+        else {
+            this.enableButton("add-list-button");
+        }      
     }
 }

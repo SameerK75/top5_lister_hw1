@@ -108,7 +108,7 @@ export default class Top5Model {
             i++;
         }
         if(previousCurrentList != null && previousCurrentList.id !== this.currentList.id ) {
-            this.tps.clearAllTransactions();  
+            this.tps.clearAllTransactions(); 
         }
         //this.tps.clearAllTransactions();
         this.view.updateToolbarButtons(this);
@@ -164,12 +164,13 @@ export default class Top5Model {
     deleteList(deleteIndex) {
         let deletingList = this.getList(deleteIndex);
         let keepCurrentList;
-        if(this.currentList.id === deletingList.id) {
+        if(this.currentList !== null && this.currentList.id === deletingList.id) {
             this.top5Lists.splice(deleteIndex, 1);
             this.view.refreshLists(this.top5Lists);
             this.saveLists();
             this.clearStatusBar();
             this.view.clearWorkspace();
+            this.currentList = null;
         }
         else {
             keepCurrentList = this.currentList;
