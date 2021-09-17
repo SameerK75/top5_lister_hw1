@@ -91,8 +91,10 @@ export default class Top5View {
     highlightList(listId) {
         // HIGHLIGHT THE LIST
         let listCard = document.getElementById("top5-list-" + listId);
+        if(listCard != null) {
         listCard.classList.remove("unselected-list-card");
         listCard.classList.add("selected-list-card");
+        }
     }
 
     unhighlightList(listId) {
@@ -109,6 +111,18 @@ export default class Top5View {
         }
         else {
             this.enableButton("undo-button");
+        }
+        if (!tps.hasTransactionToRedo()) {
+            this.disableButton("redo-button");
+        }
+        else {
+            this.enableButton("redo-button");
+        }
+        if(!this.controller.model.hasCurrentList()) {
+            this.disableButton("close-button");
+        }
+        else {
+            this.enableButton("close-button");
         }   
     }
 }

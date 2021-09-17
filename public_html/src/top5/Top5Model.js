@@ -1,6 +1,7 @@
 import jsTPS from "../common/jsTPS.js"
 import Top5List from "./Top5List.js";
 import ChangeItem_Transaction from "./transactions/ChangeItem_Transaction.js"
+import MoveItem_Transaction from "./transactions/MoveItem_Transaction.js";
 
 /**
  * Top5Model.js
@@ -93,10 +94,12 @@ export default class Top5Model {
         let list = null;
         let found = false;
         let i = 0;
+        let previousCurrentList;
         while ((i < this.top5Lists.length) && !found) {
             list = this.top5Lists[i];
             if (list.id === id) {
                 // THIS IS THE LIST TO LOAD
+                previousCurrentList = this.currentList;
                 this.currentList = list;
                 this.view.update(this.currentList);
                 this.view.highlightList(list.id);
@@ -104,7 +107,10 @@ export default class Top5Model {
             }
             i++;
         }
-        this.tps.clearAllTransactions();
+        if(previousCurrentList != null && previousCurrentList.id !== this.currentList.id ) {
+            this.tps.clearAllTransactions();  
+        }
+        //this.tps.clearAllTransactions();
         this.view.updateToolbarButtons(this);
     }
 
@@ -127,6 +133,7 @@ export default class Top5Model {
             }
             this.sortLists();   
             this.view.refreshLists(this.top5Lists);
+            this.view.updateToolbarButtons(this);
             return true;
         }        
     }
@@ -140,12 +147,18 @@ export default class Top5Model {
         this.view.update(this.currentList);
     }
 
-    changeListTitle(newTitle) {
-        this.currentList.setName(newTitle);
-        //this.sortLists();
-        //this.restoreList();
+    changeListTitle(newTitle, id) {
+        if(newTitle == "") {
+            newTitle = "Untitled";
+        }
+        let changingList = this.getList(this.getListIndex(id));
+        changingList.setName(newTitle);
+        this.sortLists();
         this.view.refreshLists(this.top5Lists);
         this.saveLists();
+        //this.sortLists();
+        //this.view.refreshLists(this.top5Lists);
+        this.view.highlightList(changingList.id);
     }
 
     deleteList(deleteIndex) {
@@ -163,8 +176,9 @@ export default class Top5Model {
             this.top5Lists.splice(deleteIndex, 1);
             this.view.refreshLists(this.top5Lists);
             this.saveLists();
-            this.currentList = keepCurrentList;
-            this.view.highlightList(this.currentList.id);
+            if(keepCurrentList !== null) {
+                this.view.highlightList(keepCurrentList.id);
+            }
         }
 
     }
@@ -175,9 +189,13 @@ export default class Top5Model {
     }
 
     dragAndDrop(index1, index2) {
-        this.currentList.moveItem(index1 - 1, index2 - 1);
+        let oldIndex = index1 - 1;
+        let newIndex = index2 - 1;
+        this.currentList.moveItem(oldIndex, newIndex);
         this.view.update(this.currentList);
         this.saveLists();
+        //this.addMoveItemTransaction(oldIndex, newIndex);
+
     }
 
     mouseOutHighlight(id) {
@@ -194,6 +212,17 @@ export default class Top5Model {
     clearStatusBar() {
         let statusBar = document.getElementById("top5-statusbar");
         statusBar.innerHTML = "";
+    }
+
+    addMoveItemTransaction = (oldIndex, newIndex) => {
+        let transaction = new MoveItem_Transaction(this, oldIndex, newIndex);
+        this.tps.addTransaction(transaction);
+    }
+
+    moveItem(oldIndex, newIndex) {
+        this.currentList.moveItem(oldIndex, newIndex);
+        this.view.update(this.currentList);
+        this.saveLists();
     }
 
     addChangeItemTransaction = (id, newText) => {
@@ -218,5 +247,9 @@ export default class Top5Model {
     }
 
     redo() {
+        if (this.tps.hasTransactionToRedo()) {
+            this.tps.doTransaction();
+            this.view.updateToolbarButtons(this);
+        }
     }
 }

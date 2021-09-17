@@ -22,17 +22,22 @@ export default class Top5Controller {
             let newList = this.model.addNewList("Untitled", ["?","?","?","?","?"]);            
             this.model.loadList(newList.id);
             this.model.saveLists();
+            this.model.clearStatusBar();
+            this.model.fillStatusBar();
         }
         document.getElementById("undo-button").onmousedown = (event) => {
             this.model.undo();
         }
         document.getElementById("redo-button").onmousedown = (event) => {
-            //this.model.redo();
+            this.model.redo();
         }
         document.getElementById("close-button").onmousedown = (event) => {
             this.model.unselectAll();
             this.model.view.clearWorkspace();
             this.model.clearStatusBar();
+            this.model.currentList = null;
+            this.model.tps.clearAllTransactions();
+            this.model.view.updateToolbarButtons(this.model);
         }
 
         // SETUP THE ITEM HANDLERS
@@ -80,7 +85,9 @@ export default class Top5Controller {
                  let droppedOnID = event.target.id;
                  let index1 = droppedID.charAt(5);
                  let index2 = droppedOnID.charAt(5);
-                 this.model.dragAndDrop(index1, index2);       
+                 //this.model.dragAndDrop(index1, index2);
+                 this.model.addMoveItemTransaction(index1 - 1, index2 - 1);
+                 this.model.view.updateToolbarButtons(this.model);       
              }
         }
     }
@@ -125,13 +132,13 @@ export default class Top5Controller {
             }
             listText.onkeydown = (event) => {
                 if (event.key === 'Enter') {
-                    this.model.changeListTitle(event.target.value);
+                    this.model.changeListTitle(event.target.value, id);
                     this.model.clearStatusBar();
                     this.model.fillStatusBar();
                 }
             }
             listText.onblur = (event) => {
-                this.model.changeListTitle(event.target.value);
+                this.model.changeListTitle(event.target.value, id);
                 this.model.clearStatusBar();
                 this.model.fillStatusBar();
             }
