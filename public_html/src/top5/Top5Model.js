@@ -156,8 +156,6 @@ export default class Top5Model {
         this.sortLists();
         this.view.refreshLists(this.top5Lists);
         this.saveLists();
-        //this.sortLists();
-        //this.view.refreshLists(this.top5Lists);
         this.view.highlightList(changingList.id);
     }
 
@@ -187,16 +185,6 @@ export default class Top5Model {
     mouseOverHighlight(id) {
             let listCard = document.getElementById("top5-list-" + id);
             listCard.classList.add("mouseOver-list-card");
-    }
-
-    dragAndDrop(index1, index2) {
-        let oldIndex = index1 - 1;
-        let newIndex = index2 - 1;
-        this.currentList.moveItem(oldIndex, newIndex);
-        this.view.update(this.currentList);
-        this.saveLists();
-        //this.addMoveItemTransaction(oldIndex, newIndex);
-
     }
 
     mouseOutHighlight(id) {

@@ -71,10 +71,12 @@ export default class Top5Controller {
                     textInput.onkeydown = (event) => {
                         if (event.key === 'Enter') {
                             this.model.addChangeItemTransaction(i-1, event.target.value);
+                            this.model.view.updateToolbarButtons(this.model);
                         }
                     }
                     textInput.onblur = (event) => {
-                        this.model.restoreList();
+                        this.model.addChangeItemTransaction(i-1, event.target.value);
+                        this.model.view.updateToolbarButtons(this.model);
                     }
                 }
             }
@@ -92,7 +94,6 @@ export default class Top5Controller {
                  let droppedOnID = event.target.id;
                  let index1 = droppedID.charAt(5);
                  let index2 = droppedOnID.charAt(5);
-                 //this.model.dragAndDrop(index1, index2);
                  this.model.addMoveItemTransaction(index1 - 1, index2 - 1);
                  this.model.view.updateToolbarButtons(this.model);       
              }
